@@ -26,7 +26,7 @@ export const login = async (req, res) => {
         err: 1,
         mes: "Missing payloads",
       });
-    const response = await services.register(req.body);
+    const response = await services.login(req.body);
     return res.status(200).json(response);
   } catch (error) {
     return res.status(500).json({

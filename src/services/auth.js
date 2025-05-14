@@ -31,7 +31,7 @@ export const register = ({ email, password }) =>
       resolve({
         err: response[1] ? 0 : 1,
         mes: response[1] ? "Register is successfully" : "Email is used",
-        token,
+        'access_token': `Bearer ${token}`,
       });
     } catch (error) {
       reject(error);
@@ -46,10 +46,24 @@ export const login = ({ email, password }) =>
         raw: true,
       });
 
+      const isChecked =
+        response && bcrypt.compareSync(password, response.password);
+      const token = isChecked
+        ? JWT.sign(
+            {
+              id: response.id,
+              email: response.email,
+              role_code: response.role_code,
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: "5d" }
+          )
+        : null;
+
       resolve({
-        err: response ? 0 : 1,
-        mes: response ? "Login is successfully" : "Error",
-        response,
+        err: token ? 0 : 1,
+        mes: token ? "Login is successfully" : response ? 'Password is wrong' : 'Email has been registered',
+        'access_token': token ? `Bearer ${token}` : null
       });
     } catch (error) {
       reject(error);
