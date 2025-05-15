@@ -31,7 +31,7 @@ export const register = ({ email, password }) =>
       resolve({
         err: response[1] ? 0 : 1,
         mes: response[1] ? "Register is successfully" : "Email is used",
-        'access_token': `Bearer ${token}`,
+        'access_token': token ? `Bearer ${token}` : null,
       });
     } catch (error) {
       reject(error);
@@ -49,7 +49,7 @@ export const login = ({ email, password }) =>
       const isChecked =
         response && bcrypt.compareSync(password, response.password);
       const token = isChecked
-        ? JWT.sign(
+        ? jwt.sign(
             {
               id: response.id,
               email: response.email,
